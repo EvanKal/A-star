@@ -1,0 +1,110 @@
+body {
+    display: flex;
+    flex-wrap: wrap;
+    max-width: 1200px;
+    height: 100vh;
+    margin: auto;
+    justify-content: center;
+}
+
+body * {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+#menu_container{
+    width: 25%;
+    background-color: lightgray;
+    padding: 10px;
+    height: 100vh;
+    flex-direction: column;
+}
+
+#table_container{
+
+    width:65%;
+    align-content: center;
+    justify-content: center;
+}
+
+table {
+    display: block;
+    height: fit-content;
+    /*width: 100%;*/
+}
+table tr {
+    width: 100%;
+}
+
+table tr td {
+    width: 10px;
+    height:10px;
+    border: 1px solid black;
+}
+
+#size_options {
+    width: 100%;
+    /*height: 15vh;*/
+    align-content: space-around;
+    /*flex-direction: column;*/
+}
+
+#draw_button_container{
+    width: 100%;
+    height: 10vh;
+    align-content: space-around;
+}
+
+.control_container {
+    width: 100%;
+    /*height: 20px;*/
+}
+
+.control_container label {
+    width: 100%;
+}
+.control_container input {
+    width: 30%;
+}
+
+#draw_areas_controls_container{
+    width: 100%;
+}
+#draw_areas_controls_container h1{
+    width: 100%;
+    font-size: 1em;
+    text-align: center;
+}
+
+
+.control_container_color_area {
+    width: 100%;
+    /*height: 10vh;*/
+    justify-content: space-around;
+}
+
+.color_container {
+    width: 10%;
+    justify-content: center;
+    align-content: center;
+}
+
+div.color {
+    width: 10px;
+    height: 10px;
+}
+
+.label_container{
+    width: 70%;
+    justify-content: center;
+}
+
+.label_container p {
+    font-size: 0.8em
+}
+
+.input_container {
+    width: 10%;
+    justify-content: center;
+    align-content: center;
+}
