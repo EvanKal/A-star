@@ -1,10 +1,11 @@
 body {
     display: flex;
     flex-wrap: wrap;
-    max-width: 1200px;
+    max-width: 1500px;
     height: 100vh;
     margin: auto;
     justify-content: center;
+    font-family: 'Ubuntu', sans-serif;
 }
 
 body * {
@@ -39,7 +40,7 @@ table tr {
 table tr td {
     width: 10px;
     height:10px;
-    border: 1px solid black;
+    border: 1px solid darkslategrey;
 }
 
 #size_options {
