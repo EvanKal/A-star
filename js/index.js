@@ -333,10 +333,18 @@ document.querySelector("table").addEventListener("mouseup", (e) => {
 
 
 document.querySelector("#start_button").addEventListener("click", (event)=> {
+    let tds = Array.from(document.querySelectorAll("table td"));
+
+    tds.forEach(e=>{
+        if(!e.hasAttribute("tile_type")){
+            setUpTdAttributes(e, tile_types["road"]);
+        }
+    })
+
     startAlgorithm();
 })
 
-function getFrontNodes(node) {
+function getNeighbors(node) {
 
     //The front Nodes will be the neighboring nodes on the left, on the right and above and below
 
@@ -385,62 +393,112 @@ function startAlgorithm(){
     let end_row_Index = end_td.parentNode.rowIndex;
 
     let path = []; //Closed nodes - nodes that have been selected as part of the path
-    let closed_nodes = [];
+    //let closed_nodes = [];
     let front_nodes = []; //Possible candidates
-    let g = 0;
+
     let current_node = start_td;
     path.push(start_td);
+    //closed_nodes.push(start_td);
+
+    let current_g = 0;
+    let current_f = 0;
+
+    start_td.setAttribute("node_f", 0);
 
     while(current_node != end_td) {
 
-        front_nodes=[];
-        let array1 =  getFrontNodes(current_node);
+        front_nodes = [];
+        let front_nodes_to_be =  getNeighbors(current_node);
 
-        array1.forEach(e=>{
+        front_nodes_to_be.forEach(e=>{
 
-            if(!path.includes(e)) {
-                front_nodes.push(e);
+            if(!path.includes(e)){
+
+                let node_tile_type = e.hasAttribute("tile_type") ? e.getAttribute("tile_type") : "";
+
+                let manhattan_distance_h = Math.abs(Number(e.cellIndex) - Number(end_cell_index)) +  Math.abs(Number(e.parentNode.rowIndex) - Number(end_row_Index));
+                let node_cost = e.hasAttribute("cost") ? Number(e.getAttribute("cost")) : 0;
+                let node_f = manhattan_distance_h + (current_g + node_cost);
+
+                if(node_f < current_f) {
+                    node_f = current_f;
+                }
+
+                // console.log("Node " , e);
+                // console.log("node_tile_type " , node_tile_type);
+                // console.log("manhattan_distance_h " , manhattan_distance_h);
+                // console.log("node_cost " , node_cost);
+                // console.log("current_g " , current_g);
+                // console.log("node_f " , node_f);
+
+                e.setAttribute("node_f", node_f);
+                e.setAttribute("manhattan_distance_h", manhattan_distance_h);
+
+                //Check if same type nodes are already included in the array with a lower node_cost
+                //If there is such a node then DO NOT push e to the front_nodes
+
+                let filter_result = front_nodes.filter(l => {
+                    let node_tile_type_l = l.hasAttribute("tile_type") ? l.getAttribute("tile_type") : "";
+                    let node_cost_l = l.hasAttribute("cost") ? Number(l.getAttribute("cost")) : 0;
+                    let node_f_l = Number(l.getAttribute("node_f"));
+
+                    return node_f_l < node_f;
+                })
+
+                 if(filter_result.length == 0) {
+                     front_nodes.push(e);
+                 }
+
+                //if(current_f == 0 || node_f > current_f) {
+                  //  front_nodes.push(e);
+                //}
+
+                //front_nodes.push(e);
+
+                //debugger;
             }
 
         })
-        //front_nodes.concat(array1);
+
+
+        console.log("New Front nodes are ", front_nodes);
+        //debugger;
 
         if(front_nodes.includes((end_td))) {
             current_node = end_td;
             path.push(end_td);
-            front_nodes.splice(front_nodes.indexOf(current_node), 1);
 
         } else {
 
             let f = 0;
-            let cost_temp = 0;
+            let h = 0;
+            let cost = 0;
             let temp;
+
             front_nodes.forEach(node => {
 
-                let manhattan_distance_h = Math.abs(Number(node.cellIndex) - Number(end_cell_index)) +  Math.abs(Number(node.parentNode.rowIndex) - Number(end_row_Index));
-                let cost = node.getAttribute("cost") ? Number(node.getAttribute("cost")) : 0;
+                let node_f = Number(node.getAttribute("node_f"));
+                let manhattan_distance_h = Number(node.getAttribute("manhattan_distance_h"));
 
-                let node_f = manhattan_distance_h + (g + cost);
-
-                if(f == 0 || node_f < f) {
+                if(f == 0 || node_f < f || (node_f == f && manhattan_distance_h < h)) {
                     f = node_f;
+                    h = manhattan_distance_h;
                     temp = node;
-                    cost_temp = cost;
+                    cost = temp.hasAttribute("cost") ? Number(temp.getAttribute("cost")) : 0;
                 }
             })
 
-            console.log("Next selected node is ", temp);
             path.push(temp);
-
-            //front_nodes.splice(front_nodes.indexOf(temp), 1);
-
-            g += cost_temp;
+            current_f = f;
+            current_g += cost;
             current_node = temp;
-            //front_nodes = [];
+            console.log("Next selected node is ", current_node);
 
-            front_nodes.forEach(e=>{
-                closed_nodes.push(e);
-            })
+            front_nodes.splice(front_nodes.indexOf(temp), 1);
+
+            if(current_node != start_td && current_node != end_td) {
+                current_node.style.setProperty("background-color", "#FF0000");
+            }
 
             //debugger;
         }
@@ -462,3 +520,10 @@ function highlightPath(path, start_td, end_td){
 }
 ///////////////////////////////////////////////////////////
 setUpColorRadios();
+
+document.querySelector("#draw_button").click();
+//document.querySelector(".input_container input[value=\"start\"]").click();
+let tds = document.querySelectorAll("table td");
+setUpTdAttributes(tds[0], tile_types["start"]);
+setUpTdAttributes(tds[tds.length-1], tile_types["end"]);
+
