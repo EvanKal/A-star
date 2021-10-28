@@ -384,24 +384,32 @@ function startAlgorithm(){
     let end_cell_index = end_td.cellIndex;
     let end_row_Index = end_td.parentNode.rowIndex;
 
-    let path = [];
+    let path = []; //Closed nodes - nodes that have been selected as part of the path
     let closed_nodes = [];
-    let front_nodes = [];
+    let front_nodes = []; //Possible candidates
     let g = 0;
     let current_node = start_td;
     path.push(start_td);
 
     while(current_node != end_td) {
 
+        front_nodes=[];
         let array1 =  getFrontNodes(current_node);
 
-        front_nodes = array1.filter(function(ele){
-            return !path.includes(ele) && !closed_nodes.includes(ele);
-        });
+        array1.forEach(e=>{
+
+            if(!path.includes(e)) {
+                front_nodes.push(e);
+            }
+
+        })
+        //front_nodes.concat(array1);
 
         if(front_nodes.includes((end_td))) {
             current_node = end_td;
             path.push(end_td);
+            front_nodes.splice(front_nodes.indexOf(current_node), 1);
+
         } else {
 
             let f = 0;
@@ -409,8 +417,8 @@ function startAlgorithm(){
             let temp;
             front_nodes.forEach(node => {
 
-                let manhattan_distance_h = Math.abs(end_cell_index - node.cellIndex) +  Math.abs(end_row_Index - node.parentNode.rowIndex);
-                let cost = node.getAttribute("cost") ? node.getAttribute("cost") : 0;
+                let manhattan_distance_h = Math.abs(Number(node.cellIndex) - Number(end_cell_index)) +  Math.abs(Number(node.parentNode.rowIndex) - Number(end_row_Index));
+                let cost = node.getAttribute("cost") ? Number(node.getAttribute("cost")) : 0;
 
                 let node_f = manhattan_distance_h + (g + cost);
 
@@ -418,15 +426,23 @@ function startAlgorithm(){
                     f = node_f;
                     temp = node;
                     cost_temp = cost;
-                } else {
-                    closed_nodes.push(node);
                 }
             })
 
             console.log("Next selected node is ", temp);
             path.push(temp);
+
+            //front_nodes.splice(front_nodes.indexOf(temp), 1);
+
             g += cost_temp;
             current_node = temp;
+            //front_nodes = [];
+
+            front_nodes.forEach(e=>{
+                closed_nodes.push(e);
+            })
+
+            //debugger;
         }
 
     }
