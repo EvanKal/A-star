@@ -4,21 +4,25 @@ let tile_type_selected;
 
 const tile_types = {
     start: {
+        type: "regular",
         color: "#00FA9A",
         description: "start",
         description_greek: "Εκκίνηση"
     },
     end: {
+        type: "regular",
         color: "#FF1493",
         description: "end",
         description_greek: "Τέλος"
     },
     obstacle: {
+        type: "regular",
         color: "#000000",
         description: "obstacle",
         description_greek: "Εμπόδιο"
     },
     road: {
+        type: "regular",
         color: "#FFE4B5",
         cost: 1,
         description: "road",
@@ -26,24 +30,28 @@ const tile_types = {
 
     },
     grass: {
+        type: "regular",
         color: "#B2FF66",
         cost: 2,
         description: "grass",
         description_greek: "Χορτάρι"
     },
     forest: {
+        type: "regular",
         color: "#008000",
         cost: 3,
         description: "forest",
         description_greek: "Δάσος"
     },
     river: {
+        type: "regular",
         color: "#6495ED",
         cost: 4,
         description: "river",
         description_greek: "Ποτάμι"
     },
     hill: {
+        type: "regular",
         color: ["#994C00", "#CC6600", "#FF8000"],
         cost: [5,4,3],
         description: "hill",
@@ -51,12 +59,27 @@ const tile_types = {
     }
     ,
     mountain: {
+        type: "regular",
         color: ["#4D4D4D", "#5A5A5A", "#666666", "#737373", "#808080", "#8D8D8D", "#9A9A9A", "#A6A6A6"],
         //color: ["#4D4D4D", "#5A5A5A", "#666666", "#737373", "#808080", "#8D8D8D", "#9A9A9A", "#A6A6A6"],
         //color: ["#C0C0C0", "#B3B3B3", "#A6A6A6", "#9A9A9A", "#8D8D8D", "#808080", "#737373", "#646464"],
         cost: [10,9,8,7,6,5,4,3],
         description: "mountain",
         description_greek: "Βουνό"
+    },
+    attraction: {
+        type: "magnet",
+        color: "#FF00FF",
+        cost: [-90,  -70, -50],
+        description: "attraction",
+        description_greek: "Έλξη"
+    },
+    repulsion: {
+        type: "magnet",
+        color: "#000000",
+        cost: [90, 70, 50],
+        description: "repulsion",
+        description_greek: "Απώθηση"
     }
 
 }
@@ -87,14 +110,18 @@ function setUpColorRadios() {
 
     for(const t in tile_types) {
 
-        draw_areas_controls_container.innerHTML = draw_areas_controls_container.innerHTML +
-            `<div class="control_container_color_area">
+            draw_areas_controls_container.innerHTML = draw_areas_controls_container.innerHTML +
+                `<div class="control_container_color_area">
                 <div class="color_container">
-                    <div class="color" style="background-color: ${Array.isArray(tile_types[t].color) ? tile_types[t].color[0] : tile_types[t].color}  "></div>
+                    
+                    
+                    ${tile_types[t].type == "magnet" ? "<div class=\"color\"><i class=\"fas fa-magnet\" style=\"font-size: 15px; color:"+`${tile_types[t].color}`+"\"></i></div>" : "<div class=\"color\" style=\"background-color: "+`${Array.isArray(tile_types[t].color) ? tile_types[t].color[0] : tile_types[t].color}`+  "\"></div>"}
+
                 </div>
                 <div class="label_container"><p>${tile_types[t].description_greek} ${tile_types[t].cost ? Array.isArray(tile_types[t].cost) ? "(Κ="+tile_types[t].cost[0]+"-"+tile_types[t].cost[tile_types[t].cost.length-1]+")" : "(Κ="+tile_types[t].cost+")" : ""}</p></div>
                 <div class="input_container"><input type="radio" name="color" value="${t}"/></div>
             </div>`;
+
     }
 
 }
@@ -115,6 +142,7 @@ document.querySelector("table").addEventListener("mousedown", (e) => {
 
         if(!radio) {
             alert("Επιλέξτε είδος περιοχής.");
+            return;
         }
 
         tile_type_selected = document.querySelector("input[name=\"color\"]:checked").value;
@@ -124,23 +152,51 @@ document.querySelector("table").addEventListener("mousedown", (e) => {
             let cellsByRadius = getNeighbourCells(e.target, radius);
             console.log(cellsByRadius);
 
-            for(const item in cellsByRadius) {
-                let index = item;
-                let arrayOfElements = cellsByRadius[item];
-                console.log(index);
+            for(const item in cellsByRadius) { //For each level get the array
 
-                for(const elem in arrayOfElements) {
-                    //console.log("arrayOfElements", arrayOfElements);
 
-                    arrayOfElements[elem].setAttribute("tile_type", tile_types[tile_type_selected].description);
-                    arrayOfElements[elem].setAttribute("cost", tile_types[tile_type_selected].cost[index]);
-                    arrayOfElements[elem].style.setProperty("background-color", tile_types[tile_type_selected].color[index]);
+                    let index = item;
+                    let arrayOfElements = cellsByRadius[item];
+                    console.log(index);
 
-                    console.log(tile_types[tile_type_selected].color[index]);
+                    for (const elem in arrayOfElements) { //For each node in the array
 
-                    //debugger;
+                        if(tile_types[tile_type_selected].type == "regular") {
+                            arrayOfElements[elem].setAttribute("tile_type", tile_types[tile_type_selected].description);
+                            arrayOfElements[elem].setAttribute("cost", tile_types[tile_type_selected].cost[index]);
+                            arrayOfElements[elem].style.setProperty("background-color", tile_types[tile_type_selected].color[index]);
 
-                }
+                            console.log(tile_types[tile_type_selected].color[index]);
+                        } else if(tile_types[tile_type_selected].type == "magnet") {
+
+                            if(arrayOfElements[elem].hasAttribute("cost")){
+
+
+                            arrayOfElements[elem].setAttribute("magnet_tile_type", tile_types[tile_type_selected].description);
+                            arrayOfElements[elem].setAttribute("magnet_cost_percent", tile_types[tile_type_selected].cost[index]);
+
+                            let i = document.createElement("i");
+                            i.classList.add("fas");
+                            i.classList.add("fa-magnet");
+                            i.style.setProperty("color", tile_types[tile_type_selected].color);
+                            i.style.setProperty("font-size", "10px");
+                            let num = 1-(0.3*Number(index));
+                            i.style.setProperty("opacity", num.toString());
+                            arrayOfElements[elem].appendChild(i);
+
+                            let cost = arrayOfElements[elem].getAttribute("cost");
+                            cost_new = cost - (cost*tile_types[tile_type_selected].cost[index]);
+                            arrayOfElements[elem].setAttribute("cost", cost_new);
+
+                            }
+
+                        }
+
+                    }
+
+
+
+
             }
 
 

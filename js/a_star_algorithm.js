@@ -87,7 +87,7 @@ function startAlgorithm(){
         })
 
         if(current_node != end_td && current_node != start_td ){
-            current_node.style.setProperty("background-color", "#FFFF00");
+            //current_node.style.setProperty("background-color", "#FFFF00");
         }
 
 
@@ -157,7 +157,7 @@ function startAlgorithm(){
 
 function highlightPath(ancestry, start_td, last_node){
     let parent = ancestry.get(last_node);
-    console.log("highlightPath: parent is ", parent);
+    //console.log("highlightPath: parent is ", parent);
 
     if(parent && parent != start_td) {
         parent.style.setProperty("background-color", "#FF0000");
