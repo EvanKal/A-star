@@ -412,7 +412,7 @@ function startAlgorithm(){
 
         front_nodes_to_be.forEach(e=>{
 
-            if(!path.includes(e)){
+            if(!path.includes(e) && e.getAttribute("tile_type") != "obstacle" ){
 
                 let node_tile_type = e.hasAttribute("tile_type") ? e.getAttribute("tile_type") : "";
 
