@@ -396,4 +396,9 @@ document.querySelector("#draw_button").click();
 let tds = document.querySelectorAll("table td");
 setUpTdAttributes(tds[0], tile_types["start"]);
 setUpTdAttributes(tds[tds.length-1], tile_types["end"]);
+tds.forEach(e=>{
+    if(!e.hasAttribute("tile_type")){
+        setUpTdAttributes(e, tile_types["road"]);
+    }
+})
 

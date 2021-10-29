@@ -1,13 +1,5 @@
 
 document.querySelector("#start_button").addEventListener("click", (event)=> {
-    let tds = Array.from(document.querySelectorAll("table td"));
-
-    tds.forEach(e=>{
-        if(!e.hasAttribute("tile_type")){
-            setUpTdAttributes(e, tile_types["road"]);
-        }
-    })
-
     startAlgorithm();
 })
 
