@@ -70,14 +70,14 @@ const tile_types = {
     attraction: {
         type: "magnet",
         color: "#FF00FF",
-        cost: [-90,  -70, -50],
+        cost: [-900,  -700, -500],
         description: "attraction",
         description_greek: "Έλξη"
     },
     repulsion: {
         type: "magnet",
         color: "#000000",
-        cost: [90, 70, 50],
+        cost: [900, 700, 500],
         description: "repulsion",
         description_greek: "Απώθηση"
     }
@@ -184,8 +184,8 @@ document.querySelector("table").addEventListener("mousedown", (e) => {
                             i.style.setProperty("opacity", num.toString());
                             arrayOfElements[elem].appendChild(i);
 
-                            let cost = arrayOfElements[elem].getAttribute("cost");
-                            cost_new = cost - (cost*tile_types[tile_type_selected].cost[index]);
+                            let cost = Number(arrayOfElements[elem].getAttribute("cost"));
+                            cost_new = cost+cost*tile_types[tile_type_selected].cost[index]*0.001;
                             arrayOfElements[elem].setAttribute("cost", cost_new);
 
                             }
@@ -387,6 +387,44 @@ document.querySelector("table").addEventListener("mouseup", (e) => {
     }
 })
 
+document.querySelector("table").addEventListener("mouseleave", (e) => {
+        mousedown=false;
+})
+
+document.querySelector("#initial_table_view_button").addEventListener("click", (e) => {
+
+    document.querySelector(".initial_table").classList.remove("hide_element");
+    document.querySelector(".path_table").classList.add("hide_element");
+
+    toggleControls();
+
+})
+
+document.querySelector("#processed_table_view_button").addEventListener("click", (e) => {
+
+    document.querySelector(".initial_table").classList.add("hide_element");
+    document.querySelector(".path_table").classList.remove("hide_element");
+
+    toggleControls();
+
+})
+
+
+function toggleControls() {
+
+    let initial_table_showing = document.querySelector("table.initial_table:not(.hide_element)");
+    let menu_overlay = document.querySelector("#menu_overlay");
+
+    console.log(initial_table_showing);
+
+    if(initial_table_showing) {
+        menu_overlay.classList.add("hide_element");
+    } else {
+        menu_overlay.classList.remove("hide_element");
+    }
+
+
+}
 
 ///////////////////////////////////////////////////////////
 setUpColorRadios();

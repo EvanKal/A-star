@@ -20,6 +20,8 @@
 
 <body>
 <div id="menu_container">
+
+    <div id="menu_overlay" class="hide_element"></div>
     <div id="size_options">
         <div class="control_container">
             <label for="num_of_rows">Πλήθος γραμμών</label>
@@ -46,9 +48,18 @@
 </div>
 
 <div id="table_container">
-    <table>
+
+    <div class="control_container">
+        <button id="initial_table_view_button">Προβολή πρωτότυπου</button>
+    </div>
+    <div class="control_container">
+        <button id="processed_table_view_button">Προβολή επεξεργασμένου</button>
+    </div>
+
+    <table class="initial_table">
 
     </table>
+
 </div>
 
 <script type="text/javascript" src="js/index.js"></script>

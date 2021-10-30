@@ -1,13 +1,33 @@
 
+let initialTable;
+
 document.querySelector("#start_button").addEventListener("click", (event)=> {
+
+    if(document.querySelector(".path_table")) {
+        document.querySelector("#table_container").removeChild(document.querySelector(".path_table"));
+    }
+
+    //First save table
+    initialTable = document.querySelector(".initial_table");
+    initialTable.classList.add("hide_element");
+
+    let pathTable = initialTable.cloneNode(true);
+    pathTable.classList.add("path_table");
+    pathTable.classList.remove("initial_table");
+    pathTable.classList.remove("hide_element");
+
+    document.querySelector("#table_container").appendChild(pathTable);
+
+    //Run algorithm
     startAlgorithm();
+    toggleControls();
 })
 
 function getNeighbors(node) {
 
     //The front Nodes will be the neighboring nodes on the left, on the right and above and below
 
-    let table = document.querySelector("table");
+    let table = document.querySelector(".path_table");
     let front_nodes = [];
     let cell_index = node.cellIndex;
     let row_Index = node.parentNode.rowIndex;
@@ -42,8 +62,8 @@ function getNeighbors(node) {
 
 
 function startAlgorithm(){
-    let start_td = document.querySelector(`td[tile_type="start"]`);
-    let end_td = document.querySelector(`td[tile_type="end"]`);
+    let start_td = document.querySelector(`.path_table td[tile_type="start"]`);
+    let end_td = document.querySelector(`.path_table td[tile_type="end"]`);
 
     let start_cell_index = start_td.cellIndex;
     let start_row_Index = start_td.parentNode.rowIndex;
@@ -143,7 +163,9 @@ function startAlgorithm(){
 
     console.log("Finished search. End node is ", current_node);
     console.log("ancestry is ", ancestry);
-    highlightPath(ancestry, start_td, end_td);
+    //highlightPath(ancestry, start_td, end_td);
+    highlightPathOnCopy(ancestry, start_td, end_td);
+
 
 }
 
@@ -156,4 +178,18 @@ function highlightPath(ancestry, start_td, last_node){
         highlightPath(ancestry, start_td, parent);
     }
 
+}
+
+function highlightPathOnCopy(ancestry, start_td, last_node) {
+
+    let parent = ancestry.get(last_node);
+    let pathTable = document.querySelector(".path_table");
+
+    if (parent && parent != start_td) {
+
+        let row = pathTable.rows[parent.parentNode.rowIndex];
+        let copy_td = row.cells[parent.cellIndex];
+        copy_td.style.setProperty("background-color", "#FF0000");
+        highlightPathOnCopy(ancestry, start_td, parent);
+    }
 }
