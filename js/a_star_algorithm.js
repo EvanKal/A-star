@@ -1,5 +1,7 @@
 
 let initialTable;
+let nextLoop = false;
+
 
 document.querySelector("#start_button").addEventListener("click", (event)=> {
 
@@ -144,6 +146,7 @@ function startAlgorithm(){
                     if (!front_nodes.includes(e)) {
                         front_nodes.push(e);
                     }
+
                 }
 
             })
@@ -153,9 +156,11 @@ function startAlgorithm(){
     }
 
     if(current_node == end_td) {
-    console.log("Finished search. End node is ", current_node);
-    console.log("ancestry is ", ancestry);
-    highlightPathOnCopy(ancestry, start_td, end_td);
+        console.log("Finished search. End node is ", current_node);
+        console.log("ancestry is ", ancestry);
+        let pathTable = document.querySelector(".path_table");
+        pathTable.classList.remove("hide_element");
+        highlightPathOnTable(ancestry, pathTable, start_td, end_td);
     } else {
         alert("Δεν ήταν δυνατή η εύρεση μονοπατιού προς τον κόμβο «Τέλος");
     }
@@ -173,16 +178,17 @@ function highlightPath(ancestry, start_td, last_node){
 
 }
 
-function highlightPathOnCopy(ancestry, start_td, last_node) {
+function highlightPathOnTable(ancestry, pathTable, start_td, last_node) {
 
     let parent = ancestry.get(last_node);
-    let pathTable = document.querySelector(".path_table");
 
     if (parent && parent != start_td) {
 
         let row = pathTable.rows[parent.parentNode.rowIndex];
         let copy_td = row.cells[parent.cellIndex];
         copy_td.style.setProperty("background-color", "#FF0000");
-        highlightPathOnCopy(ancestry, start_td, parent);
+        //debugger;
+        highlightPathOnTable(ancestry, pathTable, start_td, parent);
     }
 }
+
