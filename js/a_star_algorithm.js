@@ -72,7 +72,6 @@ function startAlgorithm(){
     let end_row_Index = end_td.parentNode.rowIndex;
 
     let ancestry = new Map();
-    //let closed = []; //Closed nodes - nodes that have been visited and given an f value
     let front_nodes = []; //Possible candidates
     let current_node;
 
@@ -98,12 +97,6 @@ function startAlgorithm(){
 
         })
 
-        if(current_node != end_td && current_node != start_td ){
-            //current_node.style.setProperty("background-color", "#FFFF00");
-        }
-
-
-
         console.log("current_node ", current_node);
         let current_g = current_node.hasAttribute("g_cost_to_node") ? Number(current_node.getAttribute("g_cost_to_node")) : 0;
         let current_f = current_node.hasAttribute("node_f") ? Number(current_node.getAttribute("node_f")) : 0;
@@ -112,7 +105,6 @@ function startAlgorithm(){
         //and move current node to the closed list
         let front_nodes_to_be = getNeighbors(current_node);
         front_nodes.splice(front_nodes.indexOf(current_node), 1);
-        //closed.push(current_node);
 
         //Clear obstacle nodes
         front_nodes_to_be = front_nodes_to_be.filter(e => {
@@ -120,7 +112,7 @@ function startAlgorithm(){
             return node_tile_type != "obstacle";
         })
 
-        //If end node is included in the neighbors then the algorithm is over
+        //If end node is included in the neighbors then the search is over
         if(front_nodes_to_be.includes(end_td)){
             console.log("End node included in front_nodes_to_be!", end_td);
             ancestry.set(end_td, current_node);
@@ -154,18 +146,19 @@ function startAlgorithm(){
                     }
                 }
 
-                //debugger;
             })
 
             console.log("New Front nodes are ", front_nodes);
         }
     }
 
+    if(current_node == end_td) {
     console.log("Finished search. End node is ", current_node);
     console.log("ancestry is ", ancestry);
-    //highlightPath(ancestry, start_td, end_td);
     highlightPathOnCopy(ancestry, start_td, end_td);
-
+    } else {
+        alert("Δεν ήταν δυνατή η εύρεση μονοπατιού προς τον κόμβο «Τέλος");
+    }
 
 }
 
